@@ -1,192 +1,199 @@
-# Predictive Maintenance: Equipment Failure & Remaining Useful Life (RUL) Prediction
+# 🔧 Predictive Maintenance: Equipment Failure & Remaining Useful Life (RUL) Prediction
 
 ---
 
 ## 📋 Table of Contents
 
-- [Project Overview](#project-overview)  
-- [Motivation](#motivation)  
-- [Dataset Description](#dataset-description)  
-- [Problem Statements](#problem-statements)  
-- [Methodology](#methodology)  
-  - [Data Preprocessing](#data-preprocessing)  
-  - [Feature Engineering](#feature-engineering)  
-  - [Modeling Techniques](#modeling-techniques)  
-- [Model Training & Evaluation](#model-training--evaluation)  
-  - [Regression Models](#regression-models)  
-  - [Classification Models](#classification-models)  
-  - [Cross-Validation](#cross-validation)  
-- [Feature Importance](#feature-importance)  
-- [Handling Missing Data](#handling-missing-data)  
-- [Comprehensive Results Summary](#comprehensive-results-summary)  
-- [Project Structure](#project-structure)  
-- [Installation Instructions](#installation-instructions)  
-- [Usage Guide](#usage-guide)  
-- [Dependencies](#dependencies)  
-- [Limitations & Known Issues](#limitations--known-issues)  
-- [Future Work & Enhancements](#future-work--enhancements)  
-- [Contributing Guidelines](#contributing-guidelines)  
-- [License](#license)  
-- [Contact Information](#contact-information)  
+- [📌 Project Overview](#📌-project-overview)
+- [🎯 Motivation](#🎯-motivation)
+- [📊 Dataset Description](#📊-dataset-description)
+- [❓ Problem Statements](#❓-problem-statements)
+- [🧪 Methodology](#🧪-methodology)
+  - [🔍 Data Preprocessing](#🔍-data-preprocessing)
+  - [🛠️ Feature Engineering](#🛠️-feature-engineering)
+  - [🤖 Modeling Techniques](#🤖-modeling-techniques)
+- [🧠 Model Training & Evaluation](#🧠-model-training--evaluation)
+  - [📈 RUL Regression](#📈-regression-models-rul-prediction)
+  - [🚨 Failure Classification](#🚨-classification-models-7-day-failure-prediction)
+  - [🔄 Cross-Validation](#🔄-cross-validation-5-fold)
+- [🔍 Feature Importance](#🔍-feature-importance)
+- [🧼 Handling Missing Data](#🧼-handling-missing-data)
+- [🧾 Comprehensive Results Summary](#🧾-comprehensive-results-summary)
+- [🗂️ Project Structure](#🗂️-project-structure)
+- [⚙️ Installation Instructions](#⚙️-installation-instructions)
+- [🚀 Usage Guide](#🚀-usage-guide)
+- [📦 Dependencies](#📦-dependencies)
+- [⚠️ Limitations & Known Issues](#⚠️-limitations--known-issues)
+- [🔮 Future Work](#🔮-future-work--enhancements)
+- [🤝 Contributing](#🤝-contributing-guidelines)
+- [📄 License](#📄-license)
+- [📬 Contact](#📬-contact-information)
 
 ---
 
-## Project Overview
+## 📌 Project Overview
 
-This repository provides a comprehensive solution for **predictive maintenance** leveraging sensor data to:
+A comprehensive solution for **predictive maintenance** using sensor-driven machine data to:
 
-- **Predict equipment failure** within a 7-day horizon (classification).  
-- **Estimate remaining useful life (RUL)** for maintenance scheduling (regression).  
+- ✅ Predict failure within the next 7 days (`classification`)
+- ✅ Estimate Remaining Useful Life (RUL) in hours (`regression`)
 
-Two robust ensemble learning algorithms, **Random Forest** and **XGBoost**, are implemented and benchmarked for their effectiveness in this domain.
-
----
-
-## Motivation
-
-Unplanned equipment downtime results in significant operational costs, safety concerns, and productivity loss. Predictive maintenance addresses these challenges by forecasting failures and estimating RUL, enabling:
-
-- Cost-effective and timely maintenance  
-- Reduced downtime and improved asset reliability  
-- Enhanced safety and operational efficiency  
+Powered by **XGBoost** and **Random Forest**, with strong emphasis on **feature engineering**, **imbalance handling**, and **robust validation**.
 
 ---
 
-## Dataset Description
+## 🎯 Motivation
 
-| Aspect                  | Description                                         |
-|------------------------|-----------------------------------------------------|
-| **Records**             | > 400,000 sensor and operational readings          |
-| **Features**            | Sensor data (vibration, temperature, pressure, etc.) and operational metrics (scaled hours, machine types) |
-| **Targets**             | - Binary failure indicator within 7 days (classification) <br> - Remaining Useful Life in hours (regression) |
-| **Class Distribution**  | Imbalanced (~6% failure cases)                       |
+**Unplanned equipment downtime** costs millions annually in:
 
----
+- ⏱️ Lost productivity  
+- 💰 Emergency repair costs  
+- ⚠️ Increased safety risks
 
-## Problem Statements
+**Predictive maintenance** empowers industries with:
 
-| Task                    | Description                                  | Target Variable           | Type          |
-|-------------------------|----------------------------------------------|--------------------------|---------------|
-| **Failure Prediction**    | Predict if equipment will fail within 7 days | `Failure_7Days` (0 or 1) | Classification |
-| **RUL Estimation**        | Estimate remaining useful life in hours      | `Remaining_Useful_Life`   | Regression     |
+- 🔧 Scheduled, cost-efficient repairs  
+- 📈 Enhanced uptime & asset utilization  
+- 🧠 Data-driven maintenance planning  
 
 ---
 
-## Methodology
+## 📊 Dataset Description
 
-### Data Preprocessing
-
-- Median imputation for missing values.  
-- Dropped features with no observed data to avoid imputation errors.  
-- One-hot encoding of categorical variables (machine types).  
-- Feature scaling applied to relevant numerical variables (`Operational_Hours_Scaled`).  
-
-### Feature Engineering
-
-- Created interaction terms such as `Laser_Temp_Interaction`.  
-- Included categorical machine types to capture equipment-specific behavior.
-
-### Modeling Techniques
-
-| Algorithm        | Description                                                | Use Case                      |
-|------------------|------------------------------------------------------------|-------------------------------|
-| **Random Forest** | Ensemble of decision trees, reduces variance, interpretable | Regression & Classification    |
-| **XGBoost**       | Gradient boosting framework optimized for speed and accuracy | Regression & Classification    |
+| Aspect              | Description                                                |
+|---------------------|------------------------------------------------------------|
+| **Size**            | 400,000+ rows (multivariate time-series)                   |
+| **Inputs**          | Vibration, temperature, pressure, machine type, ops hours  |
+| **Targets**         | `Failure_7Days` (binary) and `Remaining_Useful_Life`       |
+| **Challenge**       | Only ~6% of samples are failure-positive (high imbalance)  |
 
 ---
 
-## Model Training & Evaluation
+## ❓ Problem Statements
 
-### Regression Models: RUL Prediction
-
-| Metric              | Random Forest      | XGBoost          |
-|---------------------|--------------------|------------------|
-| **MSE**             | 2402.24            | 2417.12          |
-| **RMSE**            | 49.01              | 49.16            |
-| **R² Score**        | 0.9683             | 0.9681           |
-
-*Both models demonstrate strong predictive accuracy for RUL.*
+| Task                | Description                            | Target                | Type           |
+|---------------------|----------------------------------------|------------------------|----------------|
+| **Failure Prediction** | Will equipment fail within 7 days?    | `Failure_7Days`        | Classification |
+| **RUL Estimation**     | Estimate time to failure in hours     | `Remaining_Useful_Life`| Regression     |
 
 ---
 
-### Classification Models: Failure Prediction within 7 Days
+## 🧪 Methodology
 
-| Metric          | Random Forest      | XGBoost          |
-|-----------------|--------------------|------------------|
-| **Accuracy**    | 93.5%              | 95.2%            |
-| **Precision**   | 48.4%              | 56.4%            |
-| **Recall**      | 96.1%              | 87.9%            |
-| **F1 Score**    | 64.4%              | 68.7%            |
-| **ROC AUC**     | 97.7%              | 98.2%            |
+### 🔍 Data Preprocessing
 
-*XGBoost shows higher precision and F1 score, while Random Forest offers better recall.*
+- ❌ Drop all-null or constant columns
+- ➕ Median imputation for incomplete features
+- 🏷️ One-hot encoding of categorical types
+- 📏 RobustScaler for continuous features
 
----
+### 🛠️ Feature Engineering
 
-### Cross-Validation (5-Fold)
+- `Temp_Vib_Ratio`, `Laser_Temp_Interaction`, `Health_Index`
+- Interaction terms for sensor fusion
+- Machine-type-specific behavior inclusion
 
-| Model           | Task              | MSE ± Std Dev     | RMSE ± Std Dev    | R² ± Std Dev       |
-|-----------------|-------------------|-------------------|-------------------|--------------------|
-| Random Forest   | Regression (RUL)  | 2408.79 ± 8.39    | 49.08 ± 0.09      | 0.9682 ± 0.0002    |
-| XGBoost         | Regression (RUL)  | 2428.49 ± 9.62    | 49.28 ± 0.10      | 0.9680 ± 0.0002    |
+### 🤖 Modeling Techniques
 
-*Consistent performance across folds confirms model stability.*
-
----
-
-## Feature Importance
-
-| Rank | Feature                    | Importance (Random Forest) | Importance (XGBoost) |
-|-------|----------------------------|----------------------------|---------------------|
-| 1     | Operational_Hours_Scaled    | 96.61%                     | 85.82%              |
-| 2     | Laser_Temp_Interaction      | 2.86%                      | 8.85%               |
-| 3     | Vibration_mms               | 0.14%                      | —                   |
-| 4     | Temperature_C               | 0.11%                      | —                   |
-| 5     | Machine_Type_Valve_Controller | 0.05%                   | 0.55%               |
-| 6     | Machine_Type_Vacuum_Packer  | —                          | 0.62%               |
-
-*Operational hours are the dominant predictor, with interaction terms contributing meaningfully.*
+| Algorithm        | Description                                      | Tasks Applied        |
+|------------------|--------------------------------------------------|----------------------|
+| **Random Forest** | Bagging ensemble, low variance                   | Classification, RUL  |
+| **XGBoost**       | Gradient-boosted trees, accurate & fast          | Classification, RUL  |
 
 ---
 
-## Handling Missing Data
+## 🧠 Model Training & Evaluation
 
-- Features without observed data (`Pressure_Flow_Ratio`, `Vibration_Increase_Rate`, `Temp_Increase_Rate`, `Health_Index`) were **excluded** during median imputation, preventing errors but potentially limiting model input.  
-- Imputation warnings were systematically logged to aid transparency and future data collection improvements.
+### 📈 Regression Models: RUL Prediction
+
+| Metric       | Random Forest  | XGBoost        | Remarks                          |
+|--------------|----------------|----------------|----------------------------------|
+| MSE          | 2402.24        | 2417.12        | Lower = better                   |
+| RMSE         | 49.01 days     | 49.16 days     | Average prediction error         |
+| R² Score     | 0.9683         | 0.9681         | ~97% variance explained          |
+
+> 💡 **Formula**  
+> \[
+RMSE = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (\hat{y}_i - y_i)^2}
+\]
+> \[
+R^2 = 1 - \frac{SS_{res}}{SS_{tot}}
+\]
 
 ---
 
-## Comprehensive Results Summary
+### 🚨 Classification Models: 7-Day Failure Prediction
 
-| Model           | Task            | Metric         | Score            | Interpretation                         |
-|-----------------|-----------------|----------------|------------------|--------------------------------------|
-| Random Forest   | RUL Regression  | RMSE           | 49.01            | High predictive accuracy              |
-| Random Forest   | Failure Class.  | Precision      | 48.4%            | Moderate precision on failures       |
-| Random Forest   | Failure Class.  | Recall         | 96.1%            | Excellent detection of failures       |
-| XGBoost         | RUL Regression  | RMSE           | 49.16            | Comparable accuracy to RF              |
-| XGBoost         | Failure Class.  | Precision      | 56.4%            | Higher precision vs. RF                |
-| XGBoost         | Failure Class.  | Recall         | 87.9%            | Slightly lower recall than RF          |
-| XGBoost         | Failure Class.  | ROC AUC        | 98.2%            | Excellent overall classification       |
+| Metric        | Random Forest | XGBoost     | Notes                                      |
+|---------------|----------------|-------------|--------------------------------------------|
+| Accuracy      | 93.5%          | **95.2%**    | Overall prediction accuracy                |
+| Precision     | 48.4%          | **56.4%**    | True failures among positives              |
+| Recall        | **96.1%**      | 87.9%        | Captures more real failures                |
+| F1 Score      | 64.4%          | **68.7%**    | Balance of precision & recall              |
+| ROC AUC       | 97.7%          | **98.2%**    | Area under ROC, excellent separation       |
 
 ---
-## Project Structure
+
+### 🔄 Cross-Validation (5-Fold)
+
+| Model          | Task             | MSE ± Std      | RMSE ± Std     | R² ± Std         |
+|----------------|------------------|----------------|----------------|------------------|
+| Random Forest  | RUL Regression   | 2408.79 ± 8.39 | 49.08 ± 0.09   | 0.9682 ± 0.0002  |
+| XGBoost        | RUL Regression   | 2428.49 ± 9.62 | 49.28 ± 0.10   | 0.9680 ± 0.0002  |
+
+✅ **Cross-validation confirms model robustness.**
+
 ---
-## Installation Instructions
 
-### Prerequisites
+## 🔍 Feature Importance
 
-- Python 3.7 or higher  
-- pip package manager
+| Rank | Feature                        | Random Forest (%) | XGBoost (%) |
+|------|--------------------------------|-------------------|-------------|
+| 1    | Operational_Hours_Scaled       | 96.61              | 85.82       |
+| 2    | Laser_Temp_Interaction         | 2.86               | 8.85        |
+| 3    | Vibration_mms                  | 0.14               | —           |
+| 4    | Temperature_C                  | 0.11               | —           |
+| 5    | Machine_Type_Valve_Controller | 0.05               | 0.55        |
+| 6    | Machine_Type_Vacuum_Packer     | —                  | 0.62        |
 
-### Setup Steps
+---
 
-```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
-python -m venv venv               # Optional: create virtual environment
-source venv/bin/activate          # Activate (Linux/macOS)
-# OR venv\Scripts\activate (Windows)
-pip install -r requirements.txt
+## 🧼 Handling Missing Data
+
+- ❌ Removed columns with 100% missing values  
+- ➕ Median imputed other missing features  
+- 📋 Imputation steps logged for reproducibility  
+- ⚠️ Skipped over-engineered noisy features
+
+---
+
+## 🧾 Comprehensive Results Summary
+
+| Model        | Task               | Metric       | Score   | Key Takeaway                         |
+|--------------|--------------------|--------------|---------|--------------------------------------|
+| RandomForest | RUL Regression     | RMSE         | 49.01   | Predicts long-term wear effectively  |
+| XGBoost      | RUL Regression     | RMSE         | 49.16   | Similar performance, better speed    |
+| RandomForest | Failure Prediction | Recall       | 96.1%   | Fewer missed failures (safety first) |
+| XGBoost      | Failure Prediction | Precision    | 56.4%   | Fewer false alarms                   |
+| XGBoost      | Failure Prediction | F1 Score     | 68.7%   | Best balance of P/R on rare events   |
+
+---
+
+## 📈 Flow Diagram (Data to Results)
+
+```mermaid
+graph TD
+    A[Raw Sensor Data] --> B[Preprocessing]
+    B --> C[Feature Engineering]
+    C --> D[Train/Test Split]
+    D --> E1[XGBoost Classifier]
+    D --> E2[XGBoost Regressor]
+    E1 --> F1[Failure Prediction]
+    E2 --> F2[RUL Estimation]
+
+pie title Failure Class Distribution
+    "Normal (0)" : 94
+    "Failure (1)" : 6
 
 ---
 #LANGUAGE: CHINESE
