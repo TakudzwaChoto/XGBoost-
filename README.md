@@ -198,6 +198,38 @@ Unplanned equipment downtime results in significant operational costs, safety co
 | Data Preprocessing    | Log transforms, scaling, clipping | May lack normalization          | Proper scaling aids convergence and generalization.  |
 | Evaluation Rigor      | Cross-validation + threshold tuning | Simple train-test split         | Ensures robust, stable performance assessment.        |
 
+
+## 如何使用本项目 (How to Use)
+
+```bash
+# 克隆项目仓库并进入目录
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+
+# 创建并激活虚拟环境（Linux/macOS）
+python3 -m venv venv
+source venv/bin/activate
+
+# Windows 系统激活虚拟环境
+# venv\Scripts\activate
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 数据预处理
+python preprocessing.py
+
+# 训练模型
+python train_random_forest.py
+python train_xgboost.py
+
+# 模型评估
+python evaluate.py
+
+# 使用训练好的模型进行预测
+python predict.py --input data/new_sensor_data.csv --model models/xgboost_model.pkl
+```
+
 #LANGUAGE: CHINESE
 # 预测性维护：设备故障预测与剩余使用寿命（RUL）预测
 ---
@@ -389,4 +421,34 @@ Unplanned equipment downtime results in significant operational costs, safety co
 | 类别不平衡处理 | SMOTE + 类权重               | 可能无处理                    | 提高召回率，减少稀有故障漏检               |
 | 数据预处理     | 对数变换、缩放、截断         | 可能缺少归一化                | 加速模型收敛，提高泛化能力                 |
 | 评估方法       | 交叉验证 + 阈值调优          | 简单的训练-测试划分            | 确保结果稳健可靠，防止过拟合               |
+
+## 如何使用本项目 (How to Use)
+
+```bash
+# 克隆项目仓库并进入目录
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
+
+# 创建并激活虚拟环境（Linux/macOS）
+python3 -m venv venv
+source venv/bin/activate
+
+# Windows 系统激活虚拟环境
+# venv\Scripts\activate
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 数据预处理
+python preprocessing.py
+
+# 训练模型
+python train_random_forest.py
+python train_xgboost.py
+
+# 模型评估
+python evaluate.py
+
+# 使用训练好的模型进行预测
+python predict.py --input data/new_sensor_data.csv --model models/xgboost_model.pkl
 
