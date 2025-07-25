@@ -199,7 +199,7 @@ Unplanned equipment downtime results in significant operational costs, safety co
 | Evaluation Rigor      | Cross-validation + threshold tuning | Simple train-test split         | Ensures robust, stable performance assessment.        |
 
 
-## 如何使用本项目 (How to Use)
+## Implementation setup
 
 ```bash
 # 克隆项目仓库并进入目录
@@ -422,7 +422,7 @@ python predict.py --input data/new_sensor_data.csv --model models/xgboost_model.
 | 数据预处理     | 对数变换、缩放、截断         | 可能缺少归一化                | 加速模型收敛，提高泛化能力                 |
 | 评估方法       | 交叉验证 + 阈值调优          | 简单的训练-测试划分            | 确保结果稳健可靠，防止过拟合               |
 
-## 如何使用本项目 (How to Use)
+## Implementation setup
 
 ```bash
 # 克隆项目仓库并进入目录
