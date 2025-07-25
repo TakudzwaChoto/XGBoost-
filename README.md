@@ -199,230 +199,194 @@ Unplanned equipment downtime results in significant operational costs, safety co
 | Evaluation Rigor      | Cross-validation + threshold tuning | Simple train-test split         | Ensures robust, stable performance assessment.        |
 
 #LANGUAGE: CHINESE
-## Predictive Maintenance: Equipment Failure & Remaining Useful Life (RUL) Prediction  
-### 预测性维护：设备故障与剩余寿命（RUL）预测
-```
+# 预测性维护：设备故障预测与剩余使用寿命（RUL）预测
 ---
-## 📋 Table of Contents  
+
 ## 📋 目录
 
-- [Project Overview](#project-overview) / 项目概述  
-- [Motivation](#motivation) / 研究动机  
-- [Dataset Description](#dataset-description) / 数据集描述  
-- [Problem Statements](#problem-statements) / 问题定义  
-- [Methodology](#methodology) / 方法论  
-  - [Data Preprocessing](#data-preprocessing) / 数据预处理  
-  - [Feature Engineering](#feature-engineering) / 特征工程  
-  - [Modeling Techniques](#modeling-techniques) / 建模技术  
-- [Model Training & Evaluation](#model-training--evaluation) / 模型训练与评估  
-  - [Regression Models](#regression-models) / 回归模型  
-  - [Classification Models](#classification-models) / 分类模型  
-  - [Cross-Validation](#cross-validation) / 交叉验证  
-- [Feature Importance](#feature-importance) / 特征重要性  
-- [Handling Missing Data](#handling-missing-data) / 缺失数据处理  
-- [Comprehensive Results Summary](#comprehensive-results-summary) / 结果总结  
-- [Project Structure](#project-structure) / 项目结构  
-- [Installation Instructions](#installation-instructions) / 安装说明  
-- [Usage Guide](#usage-guide) / 使用指南  
-- [Dependencies](#dependencies) / 依赖环境  
-- [Limitations & Known Issues](#limitations--known-issues) / 限制与已知问题  
-- [Future Work & Enhancements](#future-work--enhancements) / 未来工作与改进  
-- [Contributing Guidelines](#contributing-guidelines) / 贡献指南  
-- [License](#license) / 许可协议  
-- [Contact Information](#contact-information) / 联系方式
+- [项目概述](#项目概述)  
+- [动机](#动机)  
+- [数据集描述](#数据集描述)  
+- [问题陈述](#问题陈述)  
+- [方法论](#方法论)  
+  - [数据预处理](#数据预处理)  
+  - [特征工程](#特征工程)  
+  - [建模技术](#建模技术)  
+- [模型训练与评估](#模型训练与评估)  
+  - [回归模型](#回归模型)  
+  - [分类模型](#分类模型)  
+  - [交叉验证](#交叉验证)  
+- [特征重要性](#特征重要性)  
+- [缺失数据处理](#缺失数据处理)  
+- [综合结果总结](#综合结果总结)  
+- [与资格赛标准比较](#与资格赛标准比较)  
+- [项目结构](#项目结构)  
+- [安装说明](#安装说明)  
+- [使用指南](#使用指南)  
+- [依赖项](#依赖项)  
+- [限制与已知问题](#限制与已知问题)  
+- [未来工作与改进](#未来工作与改进)  
+- [贡献指南](#贡献指南)  
+- [许可证](#许可证)  
+- [联系信息](#联系信息)  
 
 ---
-
-## Project Overview  
 ## 项目概述
 
-This repository provides a comprehensive solution for **predictive maintenance** leveraging sensor data to:  
-本项目通过传感器数据，提供全面的**预测性维护**解决方案，用于：
+本项目提供了一套基于传感器数据的预测性维护完整解决方案，旨在：
 
-- **Predict equipment failure** within a 7-day horizon (classification).  
-- **预测设备在未来7天内是否会发生故障（分类任务）**。  
-- **Estimate remaining useful life (RUL)** for maintenance scheduling (regression).  
-- **估计设备剩余使用寿命（RUL），辅助维护计划（回归任务）**。
+- 预测设备在7天内是否会发生故障（分类任务）。  
+- 估计设备的剩余使用寿命（RUL），用于维护计划安排（回归任务）。  
 
-Two robust ensemble learning algorithms, **Random Forest** and **XGBoost**, are implemented and benchmarked for their effectiveness in this domain.  
-本项目实现并对比了两种强大的集成学习算法：**随机森林（Random Forest）**和**XGBoost**，验证其在本领域的表现。
+实现并对比了两种强大的集成学习算法：随机森林（Random Forest）和XGBoost，以评估其在该领域的表现。
+---
+
+## 动机
+
+非计划性设备停机会带来巨大运营成本、安全隐患和生产力损失。预测性维护通过预测故障和估计剩余使用寿命，帮助实现：
+
+- 成本效益高且及时的维护  
+- 减少停机时间，提高资产可靠性  
+- 提升安全性和运营效率  
 
 ---
 
-## Motivation  
-## 研究动机
-
-Unplanned equipment downtime results in significant operational costs, safety concerns, and productivity loss. Predictive maintenance addresses these challenges by forecasting failures and estimating RUL, enabling:  
-设备的非计划停机会带来高额运营成本、安全隐患和生产效率下降。预测性维护通过提前预警故障及估算剩余寿命，有效应对这些问题，实现：
-
-- Cost-effective and timely maintenance  
-- 成本节约且及时的维护安排  
-- Reduced downtime and improved asset reliability  
-- 降低停机时间，提升资产可靠性  
-- Enhanced safety and operational efficiency  
-- 增强安全性和运营效率  
-
----
-
-## Dataset Description  
 ## 数据集描述
 
-| Aspect / 内容           | Description / 说明                                    |
-|------------------------|-----------------------------------------------------|
-| **Records / 记录数**    | > 400,000 sensor and operational readings / 超过40万条传感器及操作数据 |
-| **Features / 特征**     | Sensor data (vibration, temperature, pressure, etc.) and operational metrics (scaled hours, machine types) / 传感器数据（振动、温度、压力等）及操作指标（归一化运行时间，设备类型） |
-| **Targets / 目标变量**  | - Binary failure indicator within 7 days (classification) <br> - Remaining Useful Life in hours (regression) / - 7天内设备故障二分类标签 <br> - 剩余使用寿命（小时）回归目标 |
-| **Class Distribution / 类别分布** | Imbalanced (~6% failure cases) / 类别不平衡（约6%的故障样本）          |
+| 方面           | 描述                                                         |
+|----------------|--------------------------------------------------------------|
+| **记录数**    | 超过40万条传感器及运行数据                                   |
+| **特征**      | 传感器数据（振动、温度、压力等）及运行指标（时间刻度、设备类型） |
+| **目标变量**  | - 7天内故障二分类指标（分类） <br> - 剩余使用寿命（小时，回归）  |
+| **类别分布**  | 不平衡，约6%的故障样本                                        |
 
 ---
 
-## Problem Statements  
-## 问题定义
+## 问题陈述
 
-| Task / 任务               | Description / 说明                             | Target Variable / 目标变量         | Type / 类型     |
-|--------------------------|----------------------------------------------|----------------------------------|----------------|
-| **Failure Prediction**    | Predict if equipment will fail within 7 days | `Failure_7Days` (0 or 1)          | Classification 分类  |
-| **RUL Estimation**        | Estimate remaining useful life in hours      | `Remaining_Useful_Life`            | Regression 回归    |
+| 任务               | 描述                          | 目标变量                  | 类型       |
+|--------------------|-------------------------------|---------------------------|------------|
+| 故障预测           | 预测设备是否在7天内发生故障    | `Failure_7Days` (0或1)    | 分类       |
+| 剩余使用寿命估计   | 估计设备剩余使用寿命（小时）  | `Remaining_Useful_Life`   | 回归       |
 
 ---
-
-## Methodology  
 ## 方法论
 
-### Data Preprocessing  
 ### 数据预处理
 
-- Median imputation for missing values.  
 - 使用中位数填补缺失值。  
-- Dropped features with no observed data to avoid imputation errors.  
-- 删除无观测值特征以避免填补错误。  
-- One-hot encoding of categorical variables (machine types).  
-- 对类别变量（设备类型）进行独热编码。  
-- Feature scaling applied to relevant numerical variables (`Operational_Hours_Scaled`).  
-- 对数值型特征（归一化运行时间）进行特征缩放。
+- 删除无观测数据的特征，避免填补错误。  
+- 对分类变量（设备类型）进行独热编码。  
+- 对相关数值变量（`Operational_Hours_Scaled`）进行特征缩放。  
+- 应用对数变换和稳健截断减少偏态和异常值影响。
 
-### Feature Engineering  
 ### 特征工程
 
-- Created interaction terms such as `Laser_Temp_Interaction`.  
-- 构造了激光温度交互特征等。  
-- Included categorical machine types to capture equipment-specific behavior.  
-- 引入设备类型类别特征以捕捉设备差异性。
+- 创建交互项，如 `Laser_Temp_Interaction`。  
+- 纳入设备类型分类变量以捕获设备差异。  
+- 派生额外特征（如 `Temp_Vib_Ratio`、`Health_Index`）以更好地反映设备退化。
 
-### Modeling Techniques  
 ### 建模技术
 
-| Algorithm / 算法          | Description / 说明                                  | Use Case / 适用场景               |
-|--------------------------|--------------------------------------------------|--------------------------------|
-| **Random Forest**         | Ensemble of decision trees, reduces variance, interpretable / 随机森林集成多棵决策树，降低方差，模型可解释 | Regression & Classification 回归与分类 |
-| **XGBoost**               | Gradient boosting framework optimized for speed and accuracy / 高效准确的梯度提升框架    | Regression & Classification 回归与分类 |
+| 算法          | 描述                                | 适用场景               |
+|---------------|-------------------------------------|------------------------|
+| 随机森林      | 多决策树集成，降低方差，易解释      | 回归 & 分类            |
+| XGBoost       | 优化速度与准确率的梯度提升框架       | 回归 & 分类            |
 
 ---
 
-## Model Training & Evaluation  
 ## 模型训练与评估
 
-### Regression Models: RUL Prediction  
-### 回归模型：剩余寿命预测
+### 回归模型：RUL预测
 
-| Metric / 指标          | Random Forest      | XGBoost          |
-|-----------------------|--------------------|------------------|
-| **MSE**               | 2402.24            | 2417.12          |
-| **RMSE**              | 49.01              | 49.16            |
-| **R² Score**          | 0.9683             | 0.9681           |
+| 指标     | 随机森林    | XGBoost     |
+|----------|-------------|-------------|
+| MSE      | 2402.24     | 2417.12     |
+| RMSE     | 49.01       | 49.16       |
+| R²得分   | 0.9683      | 0.9681      |
 
-*Both models demonstrate strong predictive accuracy for RUL.*  
-*两种模型均展现了较高的剩余寿命预测准确度。*
+*两模型均表现出优秀的RUL预测精度。*
 
 ---
-
-### Classification Models: Failure Prediction within 7 Days  
 ### 分类模型：7天内故障预测
 
-| Metric / 指标        | Random Forest      | XGBoost          |
-|---------------------|--------------------|------------------|
-| **Accuracy**        | 93.5%              | 95.2%            |
-| **Precision**       | 48.4%              | 56.4%            |
-| **Recall**          | 96.1%              | 87.9%            |
-| **F1 Score**        | 64.4%              | 68.7%            |
-| **ROC AUC**         | 97.7%              | 98.2%            |
+| 指标       | 随机森林    | XGBoost     |
+|------------|-------------|-------------|
+| 准确率     | 93.5%       | 95.2%       |
+| 精确率     | 48.4%       | 56.4%       |
+| 召回率     | 96.1%       | 87.9%       |
+| F1分数     | 64.4%       | 68.7%       |
+| ROC AUC    | 97.7%       | 98.2%       |
 
-*XGBoost shows higher precision and F1 score, while Random Forest offers better recall.*  
-*XGBoost精确率和F1分数更高，随机森林召回率更佳。*
-
+*XGBoost在精确率和F1分数上表现更优，随机森林则有更高召回率。*
 ---
 
-### Cross-Validation (5-Fold)  
 ### 交叉验证（5折）
 
-| Model / 模型         | Task / 任务         | MSE ± Std Dev     | RMSE ± Std Dev    | R² ± Std Dev       |
-|---------------------|---------------------|-------------------|-------------------|--------------------|
-| Random Forest       | Regression (RUL)    | 2408.79 ± 8.39    | 49.08 ± 0.09      | 0.9682 ± 0.0002    |
-| XGBoost             | Regression (RUL)    | 2428.49 ± 9.62    | 49.28 ± 0.10      | 0.9680 ± 0.0002    |
+| 模型        | 任务           | MSE ± 标准差    | RMSE ± 标准差  | R² ± 标准差    |
+|-------------|----------------|-----------------|----------------|----------------|
+| 随机森林    | 回归 (RUL)     | 2408.79 ± 8.39  | 49.08 ± 0.09   | 0.9682 ± 0.0002|
+| XGBoost     | 回归 (RUL)     | 2428.49 ± 9.62  | 49.28 ± 0.10   | 0.9680 ± 0.0002|
 
-*Consistent performance across folds confirms model stability.*  
-*稳定的交叉验证结果证明模型的鲁棒性。*
+*各折间表现稳定，模型泛化能力良好。*
 
 ---
-## Feature Importance  
+
 ## 特征重要性
 
-| Rank / 排名 | Feature / 特征               | Importance (Random Forest) / 重要性 | Importance (XGBoost) / 重要性 |
-|-------------|-----------------------------|-----------------------------------|------------------------------|
-| 1           | Operational_Hours_Scaled     | 96.61%                            | 85.82%                       |
-| 2           | Laser_Temp_Interaction       | 2.86%                             | 8.85%                        |
-| 3           | Vibration_mms                | 0.14%                             | —                           |
-| 4           | Temperature_C                | 0.11%                             | —                           |
-| 5           | Machine_Type_Valve_Controller| 0.05%                             | 0.55%                        |
-| 6           | Machine_Type_Vacuum_Packer   | —                                | 0.62%                        |
+| 排名 | 特征                    | 随机森林重要性     | XGBoost重要性      |
+|------|--------------------------|--------------------|--------------------|
+| 1    | Operational_Hours_Scaled  | 96.61%             | 85.82%             |
+| 2    | Laser_Temp_Interaction    | 2.86%              | 8.85%              |
+| 3    | Vibration_mms             | 0.14%              | —                  |
+| 4    | Temperature_C             | 0.11%              | —                  |
+| 5    | Machine_Type_Valve_Controller | 0.05%          | 0.55%              |
+| 6    | Machine_Type_Vacuum_Packer | —                  | 0.62%              |
 
-*Operational hours are the dominant predictor, with interaction terms contributing meaningfully.*  
-*运行时间为最重要特征，交互项也有显著贡献。*
+*运行小时数为主要预测因子，交互特征亦有显著贡献。*
 ---
-## Handling Missing Data  
+
 ## 缺失数据处理
 
-- Features without observed data (`Pressure_Flow_Ratio`, `Vibration_Increase_Rate`, `Temp_Increase_Rate`, `Health_Index`) were **excluded** during median imputation, preventing errors but potentially limiting model input.  
-- 对无观测值特征进行排除，避免填补错误，但可能影响模型输入完整性。  
-- Imputation warnings were systematically logged to aid transparency and future data collection improvements.  
-- 填补警告被系统记录，便于后续数据改进。
+- 无观测数据的特征（`Pressure_Flow_Ratio`、`Vibration_Increase_Rate`、`Temp_Increase_Rate`、`Health_Index`）在中位数填补时被剔除，避免错误但可能限制模型输入。  
+- 系统性记录填补警告，便于透明度与未来数据收集改进。
 
 ---
-## Comprehensive Results Summary  
-## 结果总结
+## 综合结果总结
 
-| Model / 模型        | Task / 任务       | Metric / 指标    | Score / 得分    | Interpretation / 解释                      |
-|--------------------|-------------------|------------------|-----------------|-------------------------------------------|
-| Random Forest      | RUL Regression    | RMSE             | 49.01           | High predictive accuracy                   |
-| Random Forest      | Failure Class.    | Precision        | 48.4%           | Moderate precision on failures            |
-| Random Forest      | Failure Class.    | Recall           | 96.1%           | Excellent detection of failures            |
-| XGBoost            | RUL Regression    | RMSE             | 49.16           | Comparable accuracy to RF                   |
-| XGBoost            | Failure Class.    | Precision        | 56.4%           | Higher precision vs. RF                     |
-| XGBoost            | Failure Class.    | Recall           | 87.9%           | Slightly lower recall than RF                |
-| XGBoost            | Failure Class.    | ROC AUC          | 98.2%           | Excellent overall classification             |
-
----
-## Project Structure  
-## 项目结构
+| 模型        | 任务           | 指标     | 得分       | 解释                            |
+|-------------|----------------|----------|------------|--------------------------------|
+| 随机森林    | RUL回归        | RMSE     | 49.01      | 高预测精度                     |
+| 随机森林    | 故障分类       | 精确率   | 48.4%      | 故障检测精确率中等             |
+| 随机森林    | 故障分类       | 召回率   | 96.1%      | 优秀的故障检测召回率           |
+| XGBoost     | RUL回归        | RMSE     | 49.16      | 与随机森林精度相当             |
+| XGBoost     | 故障分类       | 精确率   | 56.4%      | 精确率高于随机森林             |
+| XGBoost     | 故障分类       | 召回率   | 87.9%      | 略低于随机森林召回率           |
+| XGBoost     | 故障分类       | ROC AUC  | 98.2%      | 优秀的整体分类性能             |
 
 ---
-## Installation Instructions  
-## 安装说明
 
-### Prerequisites  
-### 环境要求
+## 与资格赛标准比较
 
-- Python 3.7 or higher / Python 3.7及以上版本  
-- pip package manager / pip包管理器
+| 任务                        | 指标    | 达成 (XGBoost)  | 资格赛标准         | 分析                                      |
+|-----------------------------|---------|-----------------|--------------------|------------------------------------------|
+| **任务A：故障预测（二分类）** | 准确率  | 95.17%          | 78%                | 准确率高出22%，整体预测能力显著提升       |
+|                             | 精确率  | 56.42%          | —                  | 正确预测正样本的可靠性更强                 |
+|                             | 召回率  | 87.91%          | —                  | 召回率高，减少漏检故障，关键于预测性维护   |
+|                             | F1分数  | 68.73%          | —                  | 适合不平衡数据的平衡得分                   |
+|                             | ROC AUC | 0.9818          | —                  | 近乎完美的类别区分能力                     |
+| **任务B：剩余使用寿命预测（回归）** | MSE    | 2417.12         | 19298.90           | MSE降低8倍，预测更接近真实寿命             |
+|                             | RMSE    | 49.01 天        | 约138.9 天         | 误差显著降低，预测更精确                     |
+|                             | R²      | 0.9681          | 0.7978             | 解释方差率更高，模型拟合优良                 |
 
-### Setup Steps  
-### 安装步骤
+---
+### 关键差异点
 
-```bash
-git clone https://github.com/your-username/your-repo.git
-cd your-repo
-python -m venv venv               # Optional: create virtual environment / 可选：创建虚拟环境
-source venv/bin/activate          # Activate (Linux/macOS) / 激活环境（Linux/macOS）
-# OR venv\Scripts\activate (Windows) / Windows环境激活
-pip install -r requirements.txt  # Install dependencies / 安装依赖
+| 方面           | 本文方法                      | 资格赛方法                    | 重要性说明                                |
+|----------------|------------------------------|------------------------------|-------------------------------------------|
+| 算法           | XGBoost + SMOTE              | 可能是基础逻辑回归/线性回归    | 更好处理非线性与类别不平衡问题             |
+| 特征工程       | 高级（如`Temp_Vib_Ratio`、`Health_Index`） | 可能仅使用原始特征              | 更准确捕获设备退化模式                     |
+| 类别不平衡处理 | SMOTE + 类权重               | 可能无处理                    | 提高召回率，减少稀有故障漏检               |
+| 数据预处理     | 对数变换、缩放、截断         | 可能缺少归一化                | 加速模型收敛，提高泛化能力                 |
+| 评估方法       | 交叉验证 + 阈值调优          | 简单的训练-测试划分            | 确保结果稳健可靠，防止过拟合               |
 
