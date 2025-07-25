@@ -175,7 +175,7 @@ Unplanned equipment downtime results in significant operational costs, safety co
 
 ## Comparison to Qualifying Round Standards
 
-| Task                                 | Metric   | Achieved (XGBoost) | Qualifying Round Standard | Analysis                                                        |
+| Task                                 | Metric   | (XGBoost) Achieved | Qualifying Round (Set Standard) | Analysis                                                        |
 |-------------------------------------|----------|--------------------|---------------------------|-----------------------------------------------------------------|
 | **Task A: Failure Prediction (Binary Classification)** | Accuracy | 95.17%             | 78%                       | 22% higher accuracy indicating significantly better prediction. |
 |                                     | Precision| 56.42%             | —                         | Better reliability in positive predictions.                     |
