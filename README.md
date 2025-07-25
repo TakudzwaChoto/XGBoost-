@@ -211,7 +211,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Windows 系统激活虚拟环境
-# venv\Scripts\activate
+ venv\Scripts\activate
 
 # 安装依赖
 pip install -r requirements.txt
@@ -434,7 +434,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Windows 系统激活虚拟环境
-# venv\Scripts\activate
+ venv\Scripts\activate
 
 # 安装依赖
 pip install -r requirements.txt
